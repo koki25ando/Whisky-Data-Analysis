@@ -1,0 +1,132 @@
+---
+title: "Whisky Data Analyics"
+author: "Koki Ando"
+date: "3/11/2018"
+output:
+  html_document:
+    code_folding: show
+    highlight: tango
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Hello, everybody. My name is Koki Ando. This is my first published. RMarkdown report.
+
+I just wanted to analyze data about whisky, just because i love them.
+So i searched a little bit on safari and found this site.
+[Classification of whiskies](http://outreach.mathstat.strath.ac.uk/outreach/nessie/nessie_whisky.html)
+
+Looks interesting, so let's get started!
+
+## Preparation
+
+```{r}
+library(data.table)
+library(tidyverse)
+library(sp)
+whisky <- fread("http://outreach.mathstat.strath.ac.uk/outreach/nessie/datasets/whiskies.txt", data.table = FALSE)
+```
+
+### What's inside the dataset
+
+```{r}
+whisky$Longitude <- as.numeric(whisky$Longitude)
+whisky$Latitude <- as.numeric(whisky$Latitude)
+str(whisky)
+```
+
+Looks like someone has reviewed 86 whisky and recorded. it will be so subjective and biased dataset for sure but, i dont care.
+In terms of "data science", it is problematic. However, drinking and reviewing whisky is always subjective, and there is nothing wrong with it, right? I dont care. im doing this analytics because for having fun.
+
+## Data Analysis
+First of all, i want to see where the distilleries are located.
+
+```{r}
+library(maps)
+world.map <- map_data ("world")
+glimpse(world.map)
+```
+
+### Map Vizualization
+
+```{r}
+UK.map <- world.map %>% filter(region == "UK")
+
+whiskies.coord <- data.frame(whisky$Latitude, whisky$Longitude)
+coordinates(whiskies.coord) <- ~whisky.Latitude + whisky.Longitude
+
+proj4string(whiskies.coord) <- CRS("+init=epsg:27700")
+whiskies.coord <- spTransform(whiskies.coord, CRS("+init=epsg:4326"))
+
+whisky.map <- 
+  data.frame(Distillery = whisky$Distillery,
+             lat = whiskies.coord$whisky.Latitude,
+             long = whiskies.coord$whisky.Longitude)
+
+UK.map %>%
+  filter(subregion == "Scotland") %>% 
+  ggplot() + 
+  geom_map(map = UK.map, 
+           aes(x = long, y = lat, map_id = region),
+           fill="white", colour = "black") + 
+  coord_map() + 
+  geom_point(data = whisky.map, 
+             aes(x=lat, y = long, colour = "red", alpha = .9))
+```
+
+[This report](http://www.statworx.de/whitepaper/reporting-mit-r-a-whisky-guide.html) helped me a lot.
+
+ive never tasted over half of them, but i know some. Lets get into it.
+
+
+
+### Making whisky dataset tidy
+
+```{r}
+whisky <- whisky %>% select(Distillery:Floral)
+head(whisky)
+```
+
+```{r}
+whisky.score <- whisky %>% 
+  gather(key = Review.point, value = Score, Body:Floral)
+head(whisky.score)
+```
+
+### Data Vizualization 
+
+```{r fig.width=15, fig.height=15}
+whisky.score %>% 
+  ggplot(aes(x=Review.point, y = Score, fill = Review.point)) + 
+  geom_bar(stat = "identity") + 
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank()) + 
+  facet_wrap(~ Distillery)
+```
+
+
+## Conclusion
+I really enjoyed this analytics. it is so fun analyzing data about something im interested in.
+Ive teaching myself R for months and a little bit surprised that im still loving it, to be honest. 
+From now on, i want to share my R contents and hoppefully get connected with R lovers!
+
+i will update this article in near future because i really want to do deeper analysis.
+
+Here is my
+[GitHub](https://github.com/koki25ando)
+[kaggle](https://www.kaggle.com/koki25ando)
+
+Thanks for reading my artice!
+
+Koki
+
+
+
+
+
