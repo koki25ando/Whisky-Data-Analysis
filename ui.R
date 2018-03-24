@@ -37,7 +37,10 @@ fluidPage(
         label = "Select your 3rd Preference:",
         choices = names(whisky %>% select(-Distillery)),
         selected = "Smoky"
-      )),
+      ),
+      (
+      "Creadted by Koki Ando")
+      ),
     mainPanel(
       plotOutput(outputId = "score"),
       DT::dataTableOutput(outputId = "table"),
