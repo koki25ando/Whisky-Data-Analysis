@@ -45,22 +45,10 @@ function(input, output){
       geom_bar(stat = "identity") + 
       theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.ticks.x=element_blank()) + 
+            axis.ticks.x=element_blank(),
+            strip.text.x = element_text(size = 15)) + 
       facet_wrap(~ Distillery)
-    
   )
-  
-  
-  # output$table <- renderDataTable({
-  #   DT::datatable(
-  #     data = selected_whisky(),
-  #     option = 
-  #       list(lengthMenu = c(3, 5), 
-  #            pageLength = 5),
-  #     rownames = FALSE
-  #   )
-  # })
-  
   output$table2 <- renderTable(selected_whisky())
   
 }
