@@ -13,6 +13,7 @@ whisky$Latitude <- as.numeric(whisky$Latitude)
 whisky <- whisky %>% select(Distillery:Floral)
 
 fluidPage(
+  titlePanel("Find tonight's whisky for you!!", windowTitle = "Whisky"),
   sidebarLayout(
     sidebarPanel(
       selectInput(
