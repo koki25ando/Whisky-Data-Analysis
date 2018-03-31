@@ -12,12 +12,7 @@ whisky$Latitude <- as.numeric(whisky$Latitude)
 # whisky : Global Data (not including location data)
 whisky <- whisky %>% select(Distillery:Floral)
 
-# whisky.score : tidy whisky data
-whisky.score <- whisky %>% 
-  gather(key = Review.point, value = Score, Body:Floral)
-
 fluidPage(
-  titlePanel("Find tonight's whisky for you!!", windowTitle = "Whisky"),
   sidebarLayout(
     sidebarPanel(
       selectInput(
@@ -38,9 +33,9 @@ fluidPage(
         choices = names(whisky %>% select(-Distillery)),
         selected = "Smoky"
       ),
-      (
-      "Creadted by Koki Ando")
+      ("Creadted by Koki Ando")
       ),
+    
     mainPanel(
       plotOutput(outputId = "score"),
       DT::dataTableOutput(outputId = "table"),
