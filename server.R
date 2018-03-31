@@ -12,24 +12,16 @@ whisky$Latitude <- as.numeric(whisky$Latitude)
 # whisky : Global Data (not including location data)
 whisky <- whisky %>% select(Distillery:Floral)
 
-# whisky.score : tidy whisky data
-whisky.score <- whisky %>% 
-  gather(key = Review.point, value = Score, Body:Floral)
-
 function(input, output){
-  
   selected_whisky <- reactive({
     req(input$FirstPref)
     req(input$SecondPref)
+    req(input$ThirdPref)
     whisky %>% 
       group_by(Distillery) %>% 
-      # arrange(desc(input$FirstPref), desc(input$SecondPref)) %>% 
-      # arrange(UQ('input$FirstPref')) %>% 
-      #arrange(UQ(sym('input$FirstPref'))) %>% 
-      # arrange(!!sym(UQE(my_col))) %>% 
-      arrange(desc(!!sym(UQE(input$FirstPref))), 
-              desc(!!sym(UQE(input$SecondPref))),
-              desc(!!sym(UQE(input$ThirdPref)))) %>% 
+      arrange(desc(UQ(sym(input$FirstPref))),
+              desc(UQ(sym(input$SecondPref))),
+              desc(UQ(sym(input$ThirdPref)))) %>% 
       head(5)
   })
   
@@ -45,10 +37,12 @@ function(input, output){
       geom_bar(stat = "identity") + 
       theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.ticks.x=element_blank(),
-            strip.text.x = element_text(size = 15)) + 
+            axis.ticks.x=element_blank()) + 
       facet_wrap(~ Distillery)
+    
   )
-  output$table2 <- renderTable(selected_whisky())
   
+  output$table2 <- renderTable(
+    selected_whisky()
+  )
 }
