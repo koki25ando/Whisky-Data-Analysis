@@ -37,7 +37,8 @@ function(input, output){
       geom_bar(stat = "identity") + 
       theme(axis.title.x=element_blank(),
             axis.text.x=element_blank(),
-            axis.ticks.x=element_blank()) + 
+            axis.ticks.x=element_blank(),
+            strip.text = element_text(size=20)) + 
       facet_wrap(~ Distillery)
     
   )
