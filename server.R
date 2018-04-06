@@ -43,7 +43,8 @@ function(input, output){
     
   )
   
-  output$table2 <- renderTable(
-    selected_whisky()
+  output$table <- renderDataTable(
+    DT::datatable(
+      selected_whisky())
   )
 }
